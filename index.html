@@ -3,84 +3,187 @@
 
 <head>
 	<title>CryptoCurrency mining analysis</title>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.css">
+
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-	
+	<script src="https://unpkg.com/vue"></script>
 </head>
 
 <body>
-	
-	<canvas id="myChart"></canvas>
-	
+	<div id="app" class="ui container">
+		<div class="ui basic segment">
+			<form class="ui form">
+				<div class="fields">
+					<div class="field">
+						<label>Hashrate (GH/s)</label>
+						<input type=number v-model="hashRate" v-on:input='drawGraph'>
+					</div>
+					<div class="field">
+						<label>Difficulty</label>
+						<input type=number v-model="difficulty" v-on:input='drawGraph'>
+					</div>
+					<div class="field">
+						<label>Bitcoin price (CHF)</label>
+						<input type=number v-model="bitcoinPrice" v-on:input='drawGraph'>
+					</div>
+					<div class="field">
+						<label>Power consumption (Watts)</label>
+						<input type=number v-model="powerConsumption" v-on:input='drawGraph'>
+					</div>
+					<div class="field">
+						<label>Cost per KW/h (CHF)</label>
+						<input type=number v-model="electricityRate" v-on:input='drawGraph'>
+					</div>
+					<div class="field">
+						<label>Hardware cost (CHF)</label>
+						<input type=number v-model="hardwareCost" v-on:input='drawGraph'>
+					</div>
+				</div>
+				<div class="inline fields">
+					<label>Chart currency: </label>
+					<div class="field">
+						<div class="ui radio checkbox">
+					        <input type="radio" value="bitcoin" v-model="currency" v-on:change='drawGraph'>
+					        <label>Bitcoin</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui radio checkbox">
+					        <input type="radio" value="chf" v-model="currency" v-on:change='drawGraph'>
+					        <label>Swiss francs</label>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="ui basic center aligned segment">
+			<div class="ui statistic">
+				<div class="value">
+					{{ dailyProfit.toFixed(2) }} CHF
+				</div>
+				<div class="label">
+					Daily profit
+				</div>
+			</div>
+		</div>
+		<div class="ui basic segment">
+			<canvas id="chart"></canvas>
+		</div>
+	</div>
+
 	<script>
-		var ctx = document.getElementById('myChart').getContext('2d');
-		var timeFormat = 'MM/DD/YYYY';
-		var dates = []
-		var datas = []
-		for ( var i = 0 ; i <= 365 ; i++)
-		{
-			dates.push(newDate(i)); 	//jours d'une année
-			datas.push(2*i-100);		//données
-		}
+		var app = new Vue({
+			el: '#app',
 
-		function newDate(days) {
-			return moment().add(days, 'd').toDate();
-		}
-
-		function newDateString(days) {
-			return moment().add(days, 'd').format('LL');
-		}
-
-		function newTimestamp(days) {
-			return moment().add(days, 'd').unix();
-		}
-
-		var config = {
-			type: 'line',
 			data: {
-				labels: dates,
-				datasets: [{
-					label: "label",
-					backgroundColor: 'rgb(255, 99, 132)',
-					borderColor: 'rgb(255, 99, 132)',
-					fill: true,
-					data: datas,
-				}]
+				hashRate: 4730, // GH/s
+				difficulty: 1590896927258,
+				bitcoinPrice: 19000, // CHF
+				powerConsumption: 1293, // Watts
+				electricityRate: 0.12, // CHF
+				currency: 'bitcoin', // 'bitcoin' of 'chf'
+				hardwareCost: 500, // CHF
+				dailyProfit: 0 //CHF
 			},
-			options: {
-                title:{
-                    text: "Bitcoin mining analysis",
-					display: true
-                },
-				scales: {
-					xAxes: [{
-						type: "time",
-						time: {
-							format: 'MMM YYYY',
-							tooltipFormat: 'LL'
-						},
-						scaleLabel: {
-							display: true,
-							labelString: 'Date'
-						}
-					}, ],
-					yAxes: [{
-						scaleLabel: {
-							display: true,
-							labelString: 'Bitcoins'
-						}
-					}]
-				},
-				elements: { 
-					point: { 
-						radius: 0 
-					} 
-				}
-			}
-		};
 
-		var chart = new Chart(ctx,config);
-		
+			methods: {
+				drawGraph: function ()
+				{
+					var reward = 12.5;
+					var BTCPerDay = 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
+					var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
+					this.dailyProfit = BTCPerDay * this.bitcoinPrice - electricityCHFCostPerDay;
+					var dailyBTCProfit = BTCPerDay - electricityCHFCostPerDay / this.bitcoinPrice;
+
+					var ctx = document.getElementById('chart').getContext('2d');
+					var dates = []
+					var datas = []
+
+					for ( var i = 0 ; i <= 365 ; i++)
+					{
+						dates.push(newDate(i));
+
+						switch (this.currency)
+						{
+							case 'bitcoin':
+								datas.push(i * dailyBTCProfit - this.hardwareCost / this.bitcoinPrice);
+							break;
+
+							case 'chf':
+								datas.push(i * this.dailyProfit - this.hardwareCost);
+							break;
+						}
+					}
+
+					function newDate(days) {
+						return moment().add(days, 'd').toDate();
+					}
+
+					function newDateString(days) {
+						return moment().add(days, 'd').format('LL');
+					}
+
+					function newTimestamp(days) {
+						return moment().add(days, 'd').unix();
+					}
+
+					var config = {
+						type: 'line',
+						data: {
+							labels: dates,
+							datasets: [{
+								label: "label",
+								backgroundColor: 'rgb(255, 99, 132)',
+								borderColor: 'rgb(255, 99, 132)',
+								fill: true,
+								data: datas,
+							}]
+						},
+						options: {
+			                title:{
+			                    text: "Bitcoin mining analysis",
+								display: true
+			                },
+							scales: {
+								xAxes: [{
+									type: "time",
+									time: {
+										format: 'MMM YYYY',
+										tooltipFormat: 'LL'
+									},
+									scaleLabel: {
+										display: true,
+										labelString: 'Date'
+									}
+								}, ],
+								yAxes: [{
+									scaleLabel: {
+										display: true,
+										labelString: 'Net worth'
+									}
+								}]
+							},
+							elements: { 
+								point: { 
+									radius: 0 
+								} 
+							}
+						}
+					};
+
+					var chart = new Chart(ctx,config);
+				}
+			},
+		});
+
+		app.drawGraph();
+
+		// Initialize Semantic UI components
+	    $('.ui.checkbox').checkbox();
 	</script>
 </body>
 

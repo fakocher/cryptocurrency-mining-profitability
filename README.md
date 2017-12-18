@@ -1,1 +1,24 @@
 # cryptocurrency-mining-profitability
+
+This is an Information Visualisation project aiming to show the profitability of Bitcoin mining.
+
+## How to
+
+Since the app is only HTML, CSS and Javascript, you can simply open this link:
+
+http://htmlpreview.github.io/?https://github.com/fakocher/cryptocurrency-mining-profitability/blob/master/index.html
+
+## Sources
+
+* https://www.cryptocompare.com/api/
+* https://www.cryptocompare.com/mining/calculator/btc
+* https://bitcoin.stackexchange.com/questions/8568/equation-for-mining-profit
+* https://bitcoinwisdom.com/bitcoin/difficulty
+
+## JS & CSS Libraries
+
+* http://www.chartjs.org/
+* https://vuejs.org/
+* https://semantic-ui.com/
+* https://jquery.com/
+* http://momentjs.com/
