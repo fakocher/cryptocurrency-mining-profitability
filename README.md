@@ -8,6 +8,26 @@ Since the app is only HTML, CSS and Javascript, you can simply open this link:
 
 http://htmlpreview.github.io/?https://github.com/fakocher/cryptocurrency-mining-profitability/blob/master/index.html
 
+## Choix des données
+
+TODO
+
+## Intentions, message à transmettre
+
+TODO
+
+## Représentation
+
+TODO
+
+## Présentation et interaction
+
+TODO
+
+## Critique outil(s) utilisé(s)
+
+TODO
+
 ## Sources
 
 * https://www.cryptocompare.com/api/

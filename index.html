@@ -9,6 +9,11 @@
 <body>
 	<div id="app" class="ui container">
 		<div class="ui basic segment">
+			<h1 class="ui header">
+				CryptoCurrency mining analysis
+			</h1>
+		</div>
+		<div class="ui basic segment">
 			<form class="ui form">
 				<div class="fields">
 					<div class="field">
@@ -21,7 +26,7 @@
 					</div>
 					<div class="field">
 						<label>Bitcoin price (CHF)</label>
-						<input type=number v-model="bitcoinPrice" v-on:input='drawProfitGraphs'>
+						<input type=number v-model="bitcoinCHFPrice" v-on:input='drawProfitGraphs'>
 					</div>
 					<div class="field">
 						<label>Power consumption (Watts)</label>
@@ -36,6 +41,10 @@
 						<input type=number v-model="hardwareCost" v-on:input='drawProfitGraphs'>
 					</div>
 				</div>
+			</form>
+		</div>
+		<div class="ui basic segment">
+			<form class="ui form">
 				<div class="inline fields">
 					<label>Chart currency: </label>
 					<div class="field">
@@ -53,10 +62,8 @@
 				</div>
 			</form>
 		</div>
-		<div class="field">
-			<label> La difficulté d'écriture des transactions est un paramètre important pour calculer la rentabilité du minage. En effet, cette difficulté
-					est en hausse depuis le lancement du Bitcoin. Pour notre travail, nous avons calculé une courbe de tendance exponentielle sur l'historique
-					de la difficulté et nous l'avons utilisée pour estimer l'évolution future de la difficulté </label>
+		<div class="ui basic segment">
+			La difficulté d'écriture des transactions est un paramètre important pour calculer la rentabilité du minage. En effet, cette difficulté est en hausse depuis le lancement du Bitcoin. Pour notre travail, nous avons calculé une courbe de tendance exponentielle sur l'historique de la difficulté et nous l'avons utilisée pour estimer l'évolution future de la difficulté
 		</div>
 		<div class="ui basic segment">
 			<canvas id="difficultyGraph"></canvas>
@@ -87,337 +94,348 @@
 	<script src="https://unpkg.com/vue"></script>
 	<script src="data.js"></script>
 	<script>
-		var app = new Vue({
-			el: '#app',
+		$('document').ready(function()
+		{
+			var app = new Vue({
+				el: '#app',
 
-			data: {
-				hashRate: 4730, // GH/s
-				difficulty: 1590896927258,
-				bitcoinPrice: 19000, // CHF
-				powerConsumption: 1293, // Watts
-				electricityRate: 0.12, // CHF
-				currency: 'bitcoin', // 'bitcoin' of 'chf'
-				hardwareCost: 500, // CHF
-				dailyProfit: 0 //CHF
-			},
-
-			methods: {
-
-				/**
-				 * Draw all the graphs
-				 */
-				drawProfitGraphs: function()
-				{
-					this.drawProfitGraphExp();
-					this.drawProfitGraphPower();
+				data: {
+					hashRate: 4730, // GH/s
+					difficulty: 1590896927258,
+					bitcoinCHFPrice: 0, // CHF
+					powerConsumption: 1293, // Watts
+					electricityRate: 0.12, // CHF
+					currency: 'bitcoin', // 'bitcoin' of 'chf'
+					hardwareCost: 500, // CHF
+					dailyProfit: 0 //CHF
 				},
 
-				/**
-				 * Draw the profit graph with an exponencial factor
-				 */
-				drawProfitGraphExp: function ()
-				{
-					var reward = 12.5;
-					var BTCPerDay = 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
-					
-					var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
-					this.dailyProfit = BTCPerDay * this.bitcoinPrice - electricityCHFCostPerDay;
-					var dailyBTCProfit = BTCPerDay - electricityCHFCostPerDay / this.bitcoinPrice;
-						
-					var ctx = document.getElementById('profitGraph').getContext('2d');
-					var dates = []
-					var data = []
-					
-					var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
-					console.log(daysSinceBeginning);
-					var estimatedDifficulty;
-					var estimatedBTCPerDay;
-					var estimatedDailyProfit;
-					var estimatedDailyBTCProfit;
-					
-					console.log(this.difficulty);
-					console.log(BTCPerDay);
-					
-					for ( var i = 0 ; i <= 365 ; i++)
+				methods: {
+
+					/**
+					 * Draw all the graphs
+					 */
+					drawProfitGraphs: function()
 					{
-						dates.push(newDate(i));
+						this.drawProfitGraphExp();
+						this.drawProfitGraphPower();
+					},
+
+					/**
+					 * Draw the profit graph with an exponencial factor
+					 */
+					drawProfitGraphExp: function ()
+					{
+						var reward = 12.5;
+						var BTCPerDay = 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
 						
-						estimatedDifficulty = Math.pow(3.2622*Math.E,0.00789*(daysSinceBeginning+i/2));
-						estimatedBTCPerDay  = 24 / (estimatedDifficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
-						estimatedDailyProfit = estimatedBTCPerDay * this.bitcoinPrice - electricityCHFCostPerDay;
-						estimatedDailyBTCProfit = estimatedBTCPerDay - electricityCHFCostPerDay / this.bitcoinPrice
+						var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
+						this.dailyProfit = BTCPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
+						var dailyBTCProfit = BTCPerDay - electricityCHFCostPerDay / this.bitcoinCHFPrice;
+							
+						var ctx = document.getElementById('profitGraph').getContext('2d');
+						var dates = []
+						var data = []
 						
-						switch (this.currency)
+						var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
+						console.log(daysSinceBeginning);
+						var estimatedDifficulty;
+						var estimatedBTCPerDay;
+						var estimatedDailyProfit;
+						var estimatedDailyBTCProfit;
+						
+						console.log(this.difficulty);
+						console.log(BTCPerDay);
+						
+						for ( var i = 0 ; i <= 365 ; i++)
 						{
-							case 'bitcoin':
-								data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinPrice);
-							break;
+							dates.push(newDate(i));
+							
+							estimatedDifficulty = Math.pow(3.2622*Math.E,0.00789*(daysSinceBeginning+i/2));
+							estimatedBTCPerDay  = 24 / (estimatedDifficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
+							estimatedDailyProfit = estimatedBTCPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
+							estimatedDailyBTCProfit = estimatedBTCPerDay - electricityCHFCostPerDay / this.bitcoinCHFPrice
+							
+							switch (this.currency)
+							{
+								case 'bitcoin':
+									data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
+								break;
 
-							case 'chf':
-								data.push(i * estimatedDailyProfit - this.hardwareCost);
-							break;
-						}
-					}
-
-					function newDate(days) {
-						return moment().add(days, 'd').toDate();
-					}
-
-					function newDateString(days) {
-						return moment().add(days, 'd').format('LL');
-					}
-
-					function newTimestamp(days) {
-						return moment().add(days, 'd').unix();
-					}
-
-					var config = {
-						type: 'line',
-						data: {
-							labels: dates,
-							datasets: [{
-								label: "label",
-								backgroundColor: 'rgb(255, 99, 132)',
-								borderColor: 'rgb(255, 99, 132)',
-								fill: true,
-								data: data,
-							}]
-						},
-						options: {
-			                title:{
-			                    text: "Bitcoin mining analysis",
-								display: true
-			                },
-							scales: {
-								xAxes: [{
-									type: "time",
-									time: {
-										format: 'MMM YYYY',
-										tooltipFormat: 'D MMM YYYY'
-									},
-									scaleLabel: {
-										display: false,
-										labelString: 'Date'
-									}
-								}, ],
-								yAxes: [{
-									scaleLabel: {
-										display: true,
-										labelString: 'Net worth'
-									}
-								}]
-							},
-							elements: { 
-								point: { 
-									radius: 0 
-								} 
+								case 'chf':
+									data.push(i * estimatedDailyProfit - this.hardwareCost);
+								break;
 							}
 						}
-					};
 
-					var profitChart = new Chart(ctx,config);
-				},
+						function newDate(days) {
+							return moment().add(days, 'd').toDate();
+						}
 
-				/**
-				 * Draw the profit graph with an power factor
-				 */
-				drawProfitGraphPower: function ()
-				{
-					var reward = 12.5;
-					var BTCPerDay = 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
-					
-					var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
-					this.dailyProfit = BTCPerDay * this.bitcoinPrice - electricityCHFCostPerDay;
-					var dailyBTCProfit = BTCPerDay - electricityCHFCostPerDay / this.bitcoinPrice;
-						
-					var ctx = document.getElementById('profitGraphPower').getContext('2d');
-					var dates = []
-					var data = []
-					
-					var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
-					console.log(daysSinceBeginning);
-					
-					var estimatedDifficulty;
-					var estimatedBTCPerDay;
-					var estimatedDailyProfit;
-					var estimatedDailyBTCProfit;
-					
-					console.log(this.difficulty);
-					console.log(BTCPerDay);
-					
-					for ( var i = 0 ; i <= 365 ; i++)
+						function newDateString(days) {
+							return moment().add(days, 'd').format('LL');
+						}
+
+						function newTimestamp(days) {
+							return moment().add(days, 'd').unix();
+						}
+
+						var config = {
+							type: 'line',
+							data: {
+								labels: dates,
+								datasets: [{
+									label: "label",
+									backgroundColor: '#f9dfa2',
+									borderColor: '#FAB915',
+									fill: true,
+									data: data,
+								}]
+							},
+							options: {
+				                title:{
+				                    text: "Bitcoin mining analysis",
+									display: true
+				                },
+								scales: {
+									xAxes: [{
+										type: "time",
+										time: {
+											format: 'MMM YYYY',
+											tooltipFormat: 'D MMM YYYY'
+										},
+										scaleLabel: {
+											display: false,
+											labelString: 'Date'
+										}
+									}, ],
+									yAxes: [{
+										scaleLabel: {
+											display: true,
+											labelString: 'Net worth'
+										}
+									}]
+								},
+								elements: { 
+									point: { 
+										radius: 0 
+									} 
+								}
+							}
+						};
+
+						var profitChart = new Chart(ctx,config);
+					},
+
+					/**
+					 * Draw the profit graph with an power factor
+					 */
+					drawProfitGraphPower: function ()
 					{
-						dates.push(newDate(i));
+						var reward = 12.5;
+						var BTCPerDay = 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
 						
+						var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
+						this.dailyProfit = BTCPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
+						var dailyBTCProfit = BTCPerDay - electricityCHFCostPerDay / this.bitcoinCHFPrice;
+							
+						var ctx = document.getElementById('profitGraphPower').getContext('2d');
+						var dates = []
+						var data = []
 						
-						estimatedDifficulty = 0.0032*Math.pow(daysSinceBeginning+i/2,5) - 10.947*Math.pow(daysSinceBeginning+i/2,4) +
-												13661*Math.pow(daysSinceBeginning+i/2,3) - 7e+6*Math.pow(daysSinceBeginning+i/2,2) + 
-												1e+9*(daysSinceBeginning+i/2) - 6e+10; 
-						estimatedBTCPerDay  = 24 / (estimatedDifficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
-						estimatedDailyProfit = estimatedBTCPerDay * this.bitcoinPrice - electricityCHFCostPerDay;
-						estimatedDailyBTCProfit = estimatedBTCPerDay - electricityCHFCostPerDay / this.bitcoinPrice
+						var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
+						console.log(daysSinceBeginning);
 						
-						switch (this.currency)
+						var estimatedDifficulty;
+						var estimatedBTCPerDay;
+						var estimatedDailyProfit;
+						var estimatedDailyBTCProfit;
+						
+						console.log(this.difficulty);
+						console.log(BTCPerDay);
+						
+						for ( var i = 0 ; i <= 365 ; i++)
 						{
-							case 'bitcoin':
-								data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinPrice);
-							break;
+							dates.push(newDate(i));
+							
+							
+							estimatedDifficulty = 0.0032*Math.pow(daysSinceBeginning+i/2,5) - 10.947*Math.pow(daysSinceBeginning+i/2,4) +
+													13661*Math.pow(daysSinceBeginning+i/2,3) - 7e+6*Math.pow(daysSinceBeginning+i/2,2) + 
+													1e+9*(daysSinceBeginning+i/2) - 6e+10; 
+							estimatedBTCPerDay  = 24 / (estimatedDifficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * reward;
+							estimatedDailyProfit = estimatedBTCPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
+							estimatedDailyBTCProfit = estimatedBTCPerDay - electricityCHFCostPerDay / this.bitcoinCHFPrice
+							
+							switch (this.currency)
+							{
+								case 'bitcoin':
+									data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
+								break;
 
-							case 'chf':
-								data.push(i * estimatedDailyProfit - this.hardwareCost);
-							break;
-						}
-					}
-
-					function newDate(days) {
-						return moment().add(days, 'd').toDate();
-					}
-
-					function newDateString(days) {
-						return moment().add(days, 'd').format('LL');
-					}
-
-					function newTimestamp(days) {
-						return moment().add(days, 'd').unix();
-					}
-
-					var config = {
-						type: 'line',
-						data: {
-							labels: dates,
-							datasets: [{
-								label: "label",
-								backgroundColor: 'rgb(255, 99, 132)',
-								borderColor: 'rgb(255, 99, 132)',
-								fill: true,
-								data: data,
-							}]
-						},
-						options: {
-			                title:{
-			                    text: "Bitcoin mining analysis",
-								display: true
-			                },
-							scales: {
-								xAxes: [{
-									type: "time",
-									time: {
-										format: 'MMM YYYY',
-										tooltipFormat: 'D MMM YYYY'
-									},
-									scaleLabel: {
-										display: false,
-										labelString: 'Date'
-									}
-								}, ],
-								yAxes: [{
-									scaleLabel: {
-										display: true,
-										labelString: 'Net worth'
-									}
-								}]
-							},
-							elements: { 
-								point: { 
-									radius: 0 
-								} 
+								case 'chf':
+									data.push(i * estimatedDailyProfit - this.hardwareCost);
+								break;
 							}
 						}
-					};
 
-					var profitChartPower = new Chart(ctx,config);
-				},
+						function newDate(days) {
+							return moment().add(days, 'd').toDate();
+						}
 
-				/**
-				 * Draw the historical difficulty
-				 */
-				drawDifficultyGraph: function()
-				{
-					var ctx = document.getElementById('difficultyGraph').getContext('2d');
-					var dates = [];
-					var data = difficultyData;
-					
-					var trendLine = [];
-					var trendLinePoly = [];
-					
-					for( var i = 0 ; i <= 1636 ; i++)
+						function newDateString(days) {
+							return moment().add(days, 'd').format('LL');
+						}
+
+						function newTimestamp(days) {
+							return moment().add(days, 'd').unix();
+						}
+
+						var config = {
+							type: 'line',
+							data: {
+								labels: dates,
+								datasets: [{
+									label: "label",
+									backgroundColor: '#f9dfa2',
+									borderColor: '#FAB915',
+									fill: true,
+									data: data,
+								}]
+							},
+							options: {
+				                title:{
+				                    text: "Bitcoin mining analysis",
+									display: true
+				                },
+								scales: {
+									xAxes: [{
+										type: "time",
+										time: {
+											format: 'MMM YYYY',
+											tooltipFormat: 'D MMM YYYY'
+										},
+										scaleLabel: {
+											display: false,
+											labelString: 'Date'
+										}
+									}, ],
+									yAxes: [{
+										scaleLabel: {
+											display: true,
+											labelString: 'Net worth'
+										}
+									}]
+								},
+								elements: { 
+									point: { 
+										radius: 0 
+									} 
+								}
+							}
+						};
+
+						var profitChartPower = new Chart(ctx,config);
+					},
+
+					/**
+					 * Draw the historical difficulty
+					 */
+					drawDifficultyGraph: function()
 					{
-						dates.push(newDate(i));
-						trendLine.push(Math.pow(3.2622*Math.E,0.00789*i));
-						trendLinePoly.push(0.0032*Math.pow(i,5) - 10.947*Math.pow(i,4) +
-												13661*Math.pow(i,3) - 7e+6*Math.pow(i,2) + 
-												1e+9*i - 6e+10)
-					}
-					function newDate(days) {
-						return moment("20090103", "YYYYMMDD").add(2 * days, 'd').toDate();
-					}
-					
-					var config = {
-						type: 'line',
-						data: {
-							labels: dates,
-							datasets: [{
-								label: "data",
-								backgroundColor: 'rgb(255, 99, 132)',
-								borderColor: 'rgb(255, 99, 132)',
-								fill: false,
-								data: data,
-							},{
-								label: "trendline (exponential)",
-								backgroundColor: 'rgb(23, 156, 12)',
-								borderColor: 'rgb(23, 156, 12)',
-								fill: false,
-								data: trendLine,
-							},{
-								label: "trendline (polynomial degree 6)",
-								backgroundColor: 'rgb(10, 99, 255)',
-								borderColor: 'rgb(10, 99, 255)',
-								fill: false,
-								data: trendLinePoly,
-							}]
-						},
-						options: {
-			                title:{
-			                    text: "historical difficulty value",
-								display: true
-			                },
-							scales: {
-								xAxes: [{
-									type: "time",
-									time: {
-										format: 'YYYY',
-										tooltipFormat: 'YYYY'
-									},
-									scaleLabel: {
-										display: false,
-										labelString: 'Time'
-									}
-								}, ],
-								yAxes: [{
-									scaleLabel: {
-										display: true,
-										labelString: 'difficulty'
-									}
+						var ctx = document.getElementById('difficultyGraph').getContext('2d');
+						var dates = [];
+						var data = difficultyData;
+						
+						var trendLine = [];
+						var trendLinePoly = [];
+						
+						for( var i = 0 ; i <= 1636 ; i++)
+						{
+							dates.push(newDate(i));
+							trendLine.push(Math.pow(3.2622*Math.E,0.00789*i));
+							trendLinePoly.push(0.0032*Math.pow(i,5) - 10.947*Math.pow(i,4) +
+													13661*Math.pow(i,3) - 7e+6*Math.pow(i,2) + 
+													1e+9*i - 6e+10)
+						}
+						function newDate(days) {
+							return moment("20090103", "YYYYMMDD").add(2 * days, 'd').toDate();
+						}
+						
+						var config = {
+							type: 'line',
+							data: {
+								labels: dates,
+								datasets: [{
+									label: "data",
+									backgroundColor: '#f9dfa2',
+									borderColor: '#FAB915',
+									fill: false,
+									data: data,
+								},{
+									label: "trendline (exponential)",
+									backgroundColor: 'rgb(23, 156, 12)',
+									borderColor: 'rgb(23, 156, 12)',
+									fill: false,
+									data: trendLine,
+								},{
+									label: "trendline (polynomial degree 6)",
+									backgroundColor: 'rgb(10, 99, 255)',
+									borderColor: 'rgb(10, 99, 255)',
+									fill: false,
+									data: trendLinePoly,
 								}]
 							},
-							elements: { 
-								point: { 
-									radius: 0 
-								} 
+							options: {
+				                title:{
+				                    text: "historical difficulty value",
+									display: true
+				                },
+								scales: {
+									xAxes: [{
+										type: "time",
+										time: {
+											format: 'YYYY',
+											tooltipFormat: 'YYYY'
+										},
+										scaleLabel: {
+											display: false,
+											labelString: 'Time'
+										}
+									}, ],
+									yAxes: [{
+										scaleLabel: {
+											display: true,
+											labelString: 'difficulty'
+										}
+									}]
+								},
+								elements: { 
+									point: { 
+										radius: 0 
+									} 
+								}
 							}
 						}
-					}
 
-					var difficultyChart = new Chart(ctx,config);
+						var difficultyChart = new Chart(ctx,config);
+					}
+				},
+			});
+
+			// Fetching data, then starting the application
+			$.get({
+				url: 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=CHF',
+				success: function(bitcoinCurrentPrices)
+				{
+					app.bitcoinCHFPrice = bitcoinCurrentPrices.CHF;
+					app.drawProfitGraphs();
+					app.drawDifficultyGraph();
+
+					// Initialize Semantic UI components
+				    $('.ui.checkbox').checkbox();
 				}
-			},
+			});
 		});
-
-		app.drawProfitGraphs();
-		app.drawDifficultyGraph();
-
-		// Initialize Semantic UI components
-	    $('.ui.checkbox').checkbox();
 	</script>
 </body>
 
