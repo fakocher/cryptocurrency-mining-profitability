@@ -34,6 +34,8 @@ TODO
 * https://www.cryptocompare.com/mining/calculator/btc
 * https://bitcoin.stackexchange.com/questions/8568/equation-for-mining-profit
 * https://bitcoinwisdom.com/bitcoin/difficulty
+* https://blockchain.info/fr/charts/difficulty
+* https://blockchain.info/fr/charts/market-price
 
 ## JS & CSS Libraries
 
