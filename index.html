@@ -134,7 +134,11 @@
 					electricityRate: 0.12, // CHF
 					currency: 'bitcoin', // 'bitcoin' of 'chf'
 					hardwareCost: 500, // CHF
-					dailyProfit: 0 //CHF
+					dailyProfit: 0, //CHF,
+					bitcoinValueChart: null,
+					difficultyChart: null,
+					profitChartPower: null,
+					profitChart: null
 				},
 
 				methods: {
@@ -171,15 +175,11 @@
 						var labelling = false;
 						
 						var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
-						console.log(daysSinceBeginning);
 						var estimatedDifficulty;
 						var estimatedBTCPerDay;
 						var estimatedDailyProfit;
 						var estimatedDailyBTCProfit;
 						var estimatedDailyProfitExp;
-						
-						console.log(this.difficulty);
-						console.log(BTCPerDay);
 						
 						for ( var i = 0 ; i <= 365 ; i++)
 						{
@@ -288,11 +288,22 @@
 								},
 								legend: {
 									display: labelling
-								}
+								},
+						        tooltips: {
+						            mode: 'index',
+						            intersect: false
+						        }
 							}
 						};
 
-						var profitChart = new Chart(ctx,config);
+						if (this.profitChart)
+						{
+							this.profitChart.update(config);
+						}
+						else
+						{
+							this.profitChart = new Chart(ctx,config);
+						}
 					},
 
 					/**
@@ -434,11 +445,22 @@
 								},
 								legend: {
 									display: labelling
-								}
+								},
+						        tooltips: {
+						            mode: 'index',
+						            intersect: false
+						        }
 							}
 						};
 
-						var profitChartPower = new Chart(ctx,config);
+						if (this.profitChartPower)
+						{
+							this.profitChartPower.update(config);
+						}
+						else
+						{
+							this.profitChartPower = new Chart(ctx,config);
+						}
 					},
 
 					/**
@@ -522,11 +544,22 @@
 									point: { 
 										radius: 1 
 									} 
-								}
+								},
+						        tooltips: {
+						            mode: 'index',
+						            intersect: false
+						        }
 							}
 						}
 
-						var difficultyChart = new Chart(ctx,config);
+						if (this.difficultyChart)
+						{
+							this.difficultyChart.update(config);
+						}
+						else
+						{
+							this.difficultyChart = new Chart(ctx,config);
+						}
 					},
 					/**
 					 * Draw the historical bitcoin value
@@ -611,11 +644,22 @@
 									point: { 
 										radius: 1
 									} 
-								}
+								},
+						        tooltips: {
+						            mode: 'index',
+						            intersect: false
+						        }
 							}
 						}
 
-						var bitcoinValueChart = new Chart(ctx,config);
+						if (this.bitcoinValueChart)
+						{
+							this.bitcoinValueChart.update(config);
+						}
+						else
+						{
+							this.bitcoinValueChart = new Chart(ctx,config);
+						}
 					}
 				},
 			});
