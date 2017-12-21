@@ -167,6 +167,9 @@
 						var dataPoly = [];
 						var dataExp = [];
 						
+						var yLabel = 'Net worth (Bitcoin)';
+						var labelling = false;
+						
 						var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
 						console.log(daysSinceBeginning);
 						var estimatedDifficulty;
@@ -197,6 +200,8 @@
 							{
 								case 'bitcoin':
 									data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
+									yLabel = 'Net worth (Bitcoin)';
+									labelling = false;
 								break;
 
 								case 'chf':
@@ -204,6 +209,8 @@
 									dataLinear.push(i * estimatedDailyProfitLinear - this.hardwareCost);
 									dataPoly.push(i * estimatedDailyProfitPoly - this.hardwareCost);
 									dataExp.push(i * estimatedDailyProfitExp - this.hardwareCost);
+									yLabel = 'Net worth (CHF)';
+									labelling = true;
 								break;
 							}
 						}
@@ -270,7 +277,7 @@
 									yAxes: [{
 										scaleLabel: {
 											display: true,
-											labelString: 'Net worth'
+											labelString: yLabel
 										}
 									}]
 								},
@@ -278,6 +285,9 @@
 									point: { 
 										radius: 1 
 									} 
+								},
+								legend: {
+									display: labelling
 								}
 							}
 						};
@@ -305,15 +315,14 @@
 						var dataExp = [];
 						
 						var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
-						console.log(daysSinceBeginning);
+						
+						var yLabel = 'Net worth (Bitcoin)';
+						var labelling = false;
 						
 						var estimatedDifficulty;
 						var estimatedBTCPerDay;
 						var estimatedDailyProfit;
 						var estimatedDailyBTCProfit;
-						
-						console.log(this.difficulty);
-						console.log(BTCPerDay);
 						
 						for ( var i = 0 ; i <= 365 ; i++)
 						{
@@ -337,6 +346,8 @@
 							{
 								case 'bitcoin':
 									data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
+									yLabel = 'Net worth (Bitcoin)';
+									labelling = false;
 								break;
 
 								case 'chf':
@@ -344,6 +355,8 @@
 									dataLinear.push(i * estimatedDailyProfitLinear - this.hardwareCost);
 									dataPoly.push(i * estimatedDailyProfitPoly - this.hardwareCost);
 									dataExp.push(i * estimatedDailyProfitExp - this.hardwareCost);
+									yLabel = 'Net worth (CHF)';
+									labelling = true;
 								break;
 							}
 						}
@@ -410,7 +423,7 @@
 									yAxes: [{
 										scaleLabel: {
 											display: true,
-											labelString: 'Net worth'
+											labelString: yLabel
 										}
 									}]
 								},
@@ -418,6 +431,9 @@
 									point: { 
 										radius: 1 
 									} 
+								},
+								legend: {
+									display: labelling
 								}
 							}
 						};
