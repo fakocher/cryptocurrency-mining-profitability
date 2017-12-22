@@ -26,7 +26,18 @@ TODO
 
 ## Critique outil(s) utilisé(s)
 
-TODO
+Nous sommes contents de l'outil graphique ChartJS.
+
+## Accessibilité
+
+Le choix des couleurs a été adapté à un public daltonien.
+
+## Améliorations possibles
+
+- Ajouter la rentabilité d'autres crypto-monnaies pour comparer
+- Ajouter des processeurs depuis une API
+- Améliorer la performance des graphiques (quelques latences)
+- Ajouter l'accessibilité pour les mal-voyants
 
 ## Sources
 
@@ -39,6 +50,7 @@ TODO
 * https://www.bitcoinmining.com/bitcoin-mining-hardware/
 * https://en.bitcoin.it/wiki/Mining_hardware_comparison
 * http://mkweb.bcgsc.ca/colorblind/
+* http://www.romande-energie.ch/images/Files/prix-electricite/2017_prix-electricite_RE.pdf
 
 ## JS & CSS Libraries
 
