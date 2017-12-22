@@ -7,111 +7,179 @@
 </head>
 
 <body>
+	<div class="ui active page dimmer">
+		<div class="ui loader"></div>
+	</div>
 	<div id="app" class="ui container">
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
 			<h1 class="ui header">
-				CryptoCurrency mining analysis
+				Rentabilité du minage de Bitcoin
 			</h1>
 		</div>
-		<div class="ui basic segment">
-			La rentabilité du minage de calcule à l'aide d'une formule mathématique, dont les paramètres sont : 
-				- le prix du bitcoin
-				- le Hashrate, ...
-				- la difficulté, ...
-				- la consommation électrique du processeur
-				- le prix de l'électricité
-				- le prix du processeur 
+
+		<div class="ui info message">
+			<p>
+				La rentabilité du minage est calculée à l'aide d'une formule mathématique, dont les paramètres sont :
+			</p>
+			<ul class="ui list">
+				<li class="item">le prix du Bitcoin</li>
+				<li class="item">le Hashrate, ou la vitesse de minage du processeur</li>
+				<li class="item">la difficulté de minage, qui fluctue avec le temps</li>
+				<li class="item">la consommation électrique du processeur</li>
+				<li class="item">le prix de l'électricité</li>
+				<li class="item">le prix d'achat du processeur</li>
+			</ul>
 		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
+			<h3 class="ui header">
+				Vos informations
+			</h3>
 			<form class="ui form">
-				<div class="fields">
+				<div class="two fields">
 					<div class="field">
-						<label>Hashrate (GH/s)</label>
-						<input type=number v-model="hashRate" v-on:input='drawProfitGraphs'>
+						<label>Mineur</label>
+						<div class="ui selection dropdown" data-model="miner">
+							<input type="hidden" value="antminers9">
+							<i class="dropdown icon"></i>
+							<div class="default text">Mineur ASIC</div>
+							<div class="menu">
+								<div class="item" data-value="antminers9">AntMiner S9 (14'000 GH/s)</div>
+								<div class="item" data-value="antminers7">AntMiner S7 (4'860 GH/s)</div>
+								<div class="item" data-value="avalon721">Avalon 721 (6'000 GH/s)</div>
+								<div class="item" data-value="avalon6">Avalon 6 (3'500 GH/s)</div>
+							</div>
+						</div>
 					</div>
 					<div class="field">
-						<label>Difficulty</label>
-						<input type=number v-model="difficulty" v-on:input='drawProfitGraphs'>
+						<label>Hashrate ( GH / s )</label>
+						<input type=number v-model="hashRate">
+					</div>
+				</div>
+				<div class="two fields">
+					<div class="field">
+						<label>Prix du mineur ( CHF )</label>
+						<input type=number v-model="hardwareCost">
 					</div>
 					<div class="field">
-						<label>Bitcoin price (CHF)</label>
-						<input type=number v-model="bitcoinCHFPrice" v-on:input='drawProfitGraphs'>
+						<label>Consommation du mineur (Watts)</label>
+						<input type=number v-model="powerConsumption">
+					</div>
+				</div>
+				<div class="three fields">
+					<div class="field">
+						<label>Prix du Bitcoin (CHF)</label>
+						<input type=number v-model="bitcoinCHFPrice">
 					</div>
 					<div class="field">
-						<label>Power consumption (Watts)</label>
-						<input type=number v-model="powerConsumption" v-on:input='drawProfitGraphs'>
+						<label>Difficulté de minage</label>
+						<input type=number v-model="difficulty">
 					</div>
 					<div class="field">
-						<label>Cost per KW/h (CHF)</label>
-						<input type=number v-model="electricityRate" v-on:input='drawProfitGraphs'>
-					</div>
-					<div class="field">
-						<label>Hardware cost (CHF)</label>
-						<input type=number v-model="hardwareCost" v-on:input='drawProfitGraphs'>
+						<label>Prix de l'électricité ( CHF / kWh ) </label>
+						<input type=number v-model="electricityRate">
 					</div>
 				</div>
 			</form>
 		</div>
-		<div class="ui basic segment">
-			Avec les valeurs actuelles du marché, la rentabilité est de : 
-		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic center aligned segment">
-			<div class="ui statistic">
+			<p>
+				Avec les valeurs actuelles du marché, la rentabilité est de :
+			</p>
+			<div class="ui statistic" :class="{ green: dailyProfit > 0, red: dailyProfit < 0 }">
 				<div class="value">
 					{{ dailyProfit.toFixed(2) }} CHF
 				</div>
 				<div class="label">
-					Daily profit
+					Profit quotidien
 				</div>
 			</div>
 		</div>
-		<div class="ui basic segment">
-			Les paramètres liées au bitcoin (hashrate, difficulté, valeur) sont en changement constant. Il est donc important pour calculer une rentabilité de prévoir les changements de ces valeurs. Pour ce faire, nous nous sommes basés sur les historiques pour calculer des courbes de tendances. Pour des raisons de temps, nous nous sommes concentrés sur deux paramètres, la valeur du bitcoin et la difficulté. 
+
+		<div class="ui hidden divider"></div>
+
+		<div class="ui info message">
+			<p>
+				Les paramètres liés au bitcoin (hashrate, difficulté, valeur) sont en changement constant. Il est donc important pour calculer une rentabilité de prévoir les changements de ces valeurs. Pour ce faire, nous nous sommes basés sur les historiques pour calculer des courbes de tendances. Pour des raisons de temps, nous nous sommes concentrés sur deux paramètres, la valeur du bitcoin et la difficulté.
+			</p>
+			<p>
+				La difficulté d'écriture des transactions est un paramètre important pour calculer la rentabilité du minage. En effet, cette difficulté est en hausse depuis le lancement du Bitcoin. Pour notre travail, nous avons calculé deux courbes de tendance, exponentielle et polynomiale, sur l'historique de la difficulté et nous l'avons utilisée pour estimer l'évolution future de la difficulté
+			</p>
 		</div>
-		<div class="ui basic segment">
-			La difficulté d'écriture des transactions est un paramètre important pour calculer la rentabilité du minage. En effet, cette difficulté est en hausse depuis le lancement du Bitcoin. Pour notre travail, nous avons calculé deux courbes de tendance, exponentielle et polynomiale, sur l'historique de la difficulté et nous l'avons utilisée pour estimer l'évolution future de la difficulté
-		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
 			<canvas id="difficultyGraph"></canvas>
 		</div>
-		<div class="ui basic segment">
+
+		<div class="ui hidden divider"></div>
+
+		<div class="ui info message">
 			Un autre paramètre important est la valeur du Bitcoin sur le marché. Celle-ci connaît une hausse importante depuis 2017, mais il paraît peu probable que la valeur continue d'augmenter aussi sèchement. Pour notre travail, nous avons calculé trois courbes de tendances, linéaire, polynomiale et exponentielle. 
 		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
 			<canvas id="bitcoinValueGraph"></canvas>
 		</div>
-		<div class="ui basic segment">
+
+		<div class="ui hidden divider"></div>
+
+		<div class="ui info message">
 			Les deux graphiques suivant montrent la rentabilité en Bitcoin et en francs suisse sur un an, en prenant en compte les courbes de tendances calculées précedemment.
 		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
 			<form class="ui form">
 				<div class="inline fields">
-					<label>Chart currency: </label>
+					<label>Monnaie de l'axe du profit :</label>
 					<div class="field">
 						<div class="ui radio checkbox">
-					        <input type="radio" value="bitcoin" v-model="currency" v-on:change='drawProfitGraphs'>
-					        <label>Bitcoin</label>
+					        <input type="radio" value="chf" v-model="currency">
+					        <label>Francs suisses</label>
 						</div>
 					</div>
 					<div class="field">
 						<div class="ui radio checkbox">
-					        <input type="radio" value="chf" v-model="currency" v-on:change='drawProfitGraphs'>
-					        <label>Swiss francs</label>
+					        <input type="radio" value="bitcoin" v-model="currency">
+					        <label>Bitcoin</label>
 						</div>
 					</div>
 				</div>
 			</form>
 		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
 			<canvas id="profitGraph"></canvas>
 		</div>
+
+		<div class="ui hidden divider"></div>
+
 		<div class="ui basic segment">
 			<canvas id="profitGraphPower"></canvas>
 		</div>
-		<div class="ui basic segment">
+
+		<div class="ui hidden divider"></div>
+
+		<div class="ui info message">
 			Nos résultats sont peu encourageants. En effet, l'augmentation rapide de la difficulté fait qu'il est peu probable que le minage soit rentable. Notez cependant que ces graphiques reposent sur des estimations.
 		</div>
-		
+
+		<div class="ui hidden divider"></div>		
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -123,22 +191,98 @@
 	<script>
 		$('document').ready(function()
 		{
+		    // Vue.js
 			var app = new Vue({
 				el: '#app',
 
 				data: {
-					hashRate: 4730, // GH/s
+					miner: 'antminers9', // GH/s
+					hashRate: 14000, // GH/s
 					difficulty: 1590896927258,
 					bitcoinCHFPrice: 0, // CHF
-					powerConsumption: 1293, // Watts
+					powerConsumption: 1375, // Watts
 					electricityRate: 0.12, // CHF
-					currency: 'bitcoin', // 'bitcoin' of 'chf'
-					hardwareCost: 500, // CHF
+					currency: 'chf', // 'bitcoin' of 'chf'
+					hardwareCost: 2400, // CHF
 					dailyProfit: 0, //CHF,
 					bitcoinValueChart: null,
 					difficultyChart: null,
 					profitChartPower: null,
 					profitChart: null
+				},
+
+				watch: {
+					miner: function (val, oldVal)
+					{
+						switch (val)
+						{
+							case 'antminers9':
+								this.hashRate = 14000;
+								this.powerConsumption = 1375
+								this.hardwareCost = 2500
+							break;
+
+							case 'antminers7':
+								this.hashRate = 4860;
+								this.powerConsumption = 1210
+								this.hardwareCost = 2000
+							break;
+
+							case 'avalon721':
+								this.hashRate = 6000;
+								this.powerConsumption = 900
+								this.hardwareCost = 900
+							break;
+
+							case 'avalon6':
+								this.hashRate = 3500;
+								this.powerConsumption = 1300
+								this.hardwareCost = 500
+							break;
+						}
+					},
+					hashRate: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					},
+					difficulty: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					},
+					bitcoinCHFPrice: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					},
+					powerConsumption: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					},
+					electricityRate: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					},
+					currency: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					},
+					hardwareCost: function (val, oldVal)
+					{
+						this.drawProfitGraphs();
+					}
+				},
+
+				mounted: function ()
+				{	
+					// Initialize Semantic UI components
+				    $('.ui.checkbox').checkbox();
+				    $('.ui.dropdown').dropdown({
+				    	onChange: function(value, text, $choice)
+				    	{
+				    		model = $(this).data('model');
+				    		
+				    		app[model] = value;
+				    	}
+				    });
 				},
 
 				methods: {
@@ -200,7 +344,7 @@
 							{
 								case 'bitcoin':
 									data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
-									yLabel = 'Net worth (Bitcoin)';
+									yLabel = 'Profit quotidien (Bitcoin)';
 									labelling = false;
 								break;
 
@@ -209,7 +353,7 @@
 									dataLinear.push(i * estimatedDailyProfitLinear - this.hardwareCost);
 									dataPoly.push(i * estimatedDailyProfitPoly - this.hardwareCost);
 									dataExp.push(i * estimatedDailyProfitExp - this.hardwareCost);
-									yLabel = 'Net worth (CHF)';
+									yLabel = 'Profit quotidien (CHF)';
 									labelling = true;
 								break;
 							}
@@ -232,34 +376,34 @@
 							data: {
 								labels: dates,
 								datasets: [{
-									label: "constant bitcoin price",
-									backgroundColor: '#f9dfa2',
-									borderColor: '#FAB915',
+									label: "Prix BTC constant",
+									backgroundColor: 'rgb(230, 159, 0)',
+									borderColor: 'rgb(230, 159, 0)',
 									fill: false,
 									data: data,
 								},{
-									label: "linear bitcoin price",
-									backgroundColor: 'rgb(23, 156, 12)',
-									borderColor: 'rgb(23, 156, 12)',
+									label: "Prix BTC  linéaire",
+									backgroundColor: 'rgb(86, 180, 233)',
+									borderColor: 'rgb(86, 180, 233)',
 									fill: false,
 									data: dataLinear,
 								},{
-									label: "polynomial bitcoin price",
-									backgroundColor: 'rgb(10, 99, 255)',
-									borderColor: 'rgb(10, 99, 255)',
+									label: "Prix BTC polynomial",
+									backgroundColor: 'rgb(213, 94, 0)',
+									borderColor: 'rgb(213, 94, 0)',
 									fill: false,
 									data: dataPoly,
 								},{
-									label: "exponential bitcoin price",
-									backgroundColor: 'rgb(232, 60, 60)',
-									borderColor: 'rgb(232, 60, 60)',
+									label: "Prix BTC exponentiel",
+									backgroundColor: 'rgb(0, 114, 178)',
+									borderColor: 'rgb(0, 114, 178)',
 									fill: false,
 									data: dataExp,
 								}]
 							},
 							options: {
 				                title:{
-				                    text: "Bitcoin mining analysis, using exponential prevision on difficulty",
+				                    text: "Analyse du minage de Bitcoin ; prédiction exponentielle de la difficulté",
 									display: true
 				                },
 								scales: {
@@ -298,12 +442,10 @@
 
 						if (this.profitChart)
 						{
-							this.profitChart.update(config);
+							this.profitChart.destroy();
 						}
-						else
-						{
-							this.profitChart = new Chart(ctx,config);
-						}
+
+						this.profitChart = new Chart(ctx,config);
 					},
 
 					/**
@@ -327,7 +469,7 @@
 						
 						var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
 						
-						var yLabel = 'Net worth (Bitcoin)';
+						var yLabel = 'Profit (Bitcoin)';
 						var labelling = false;
 						
 						var estimatedDifficulty;
@@ -357,7 +499,7 @@
 							{
 								case 'bitcoin':
 									data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
-									yLabel = 'Net worth (Bitcoin)';
+									yLabel = 'Profit quotidien (Bitcoin)';
 									labelling = false;
 								break;
 
@@ -366,7 +508,7 @@
 									dataLinear.push(i * estimatedDailyProfitLinear - this.hardwareCost);
 									dataPoly.push(i * estimatedDailyProfitPoly - this.hardwareCost);
 									dataExp.push(i * estimatedDailyProfitExp - this.hardwareCost);
-									yLabel = 'Net worth (CHF)';
+									yLabel = 'Profit quotidien (CHF)';
 									labelling = true;
 								break;
 							}
@@ -390,33 +532,33 @@
 								labels: dates,
 								datasets: [{
 									label: "constant bitcoin price",
-									backgroundColor: '#f9dfa2',
-									borderColor: '#FAB915',
+									backgroundColor: 'rgb(230, 159, 0)',
+									borderColor: 'rgb(230, 159, 0)',
 									fill: false,
 									data: data,
 								},{
 									label: "linear bitcoin price",
-									backgroundColor: 'rgb(23, 156, 12)',
-									borderColor: 'rgb(23, 156, 12)',
+									backgroundColor: 'rgb(86, 180, 233)',
+									borderColor: 'rgb(86, 180, 233)',
 									fill: false,
 									data: dataLinear,
 								},{
 									label: "polynomial bitcoin price",
-									backgroundColor: 'rgb(10, 99, 255)',
-									borderColor: 'rgb(10, 99, 255)',
+									backgroundColor: 'rgb(213, 94, 0)',
+									borderColor: 'rgb(213, 94, 0)',
 									fill: false,
 									data: dataPoly,
 								},{
 									label: "exponential bitcoin price",
-									backgroundColor: 'rgb(232, 60, 60)',
-									borderColor: 'rgb(232, 60, 60)',
+									backgroundColor: 'rgb(0, 114, 178)',
+									borderColor: 'rgb(0, 114, 178)',
 									fill: false,
 									data: dataExp,
 								}]
 							},
 							options: {
 				                title:{
-				                    text: "Bitcoin mining analysis, using polynomial prevision on difficulty",
+				                    text: "Analyse du minage de Bitcoin ; prédiction polynomiale de la difficulté",
 									display: true
 				                },
 								scales: {
@@ -455,12 +597,10 @@
 
 						if (this.profitChartPower)
 						{
-							this.profitChartPower.update(config);
+							this.profitChartPower.destroy();
 						}
-						else
-						{
-							this.profitChartPower = new Chart(ctx,config);
-						}
+
+						this.profitChartPower = new Chart(ctx,config);
 					},
 
 					/**
@@ -492,28 +632,28 @@
 							data: {
 								labels: dates,
 								datasets: [{
-									label: "data",
-									backgroundColor: '#f9dfa2',
-									borderColor: '#FAB915',
+									label: "Réel",
+									backgroundColor: 'rgb(230, 159, 0)',
+									borderColor: 'rgb(230, 159, 0)',
 									fill: false,
 									data: data,
 								},{
-									label: "trendline (exponential)",
-									backgroundColor: 'rgb(23, 156, 12)',
-									borderColor: 'rgb(23, 156, 12)',
+									label: "Tendance exponencielle",
+									backgroundColor: 'rgb(0, 114, 178)',
+									borderColor: 'rgb(0, 114, 178)',
 									fill: false,
 									data: trendLine,
 								},{
-									label: "trendline (polynomial degree 6)",
-									backgroundColor: 'rgb(10, 99, 255)',
-									borderColor: 'rgb(10, 99, 255)',
+									label: "Tendance polynomiale degré 6",
+									backgroundColor: 'rgb(213, 94, 0)',
+									borderColor: 'rgb(213, 94, 0)',
 									fill: false,
 									data: trendLinePoly,
 								}]
 							},
 							options: {
 				                title:{
-				                    text: "historical difficulty value",
+				                    text: "Historique de la difficulté de minage du Bitcoin",
 									display: true
 				                },
 								scales: {
@@ -531,7 +671,7 @@
 									yAxes: [{
 										scaleLabel: {
 											display: true,
-											labelString: 'difficulty    (x10^-9)'
+											labelString: 'difficulté ( milliards )'
 										},
 										ticks: {
 											callback: function(value, index, values) {
@@ -554,12 +694,10 @@
 
 						if (this.difficultyChart)
 						{
-							this.difficultyChart.update(config);
+							this.difficultyChart.destroy();
 						}
-						else
-						{
-							this.difficultyChart = new Chart(ctx,config);
-						}
+
+						this.difficultyChart = new Chart(ctx,config);
 					},
 					/**
 					 * Draw the historical bitcoin value
@@ -591,34 +729,34 @@
 							data: {
 								labels: dates,
 								datasets: [{
-									label: "data",
-									backgroundColor: '#f9dfa2',
-									borderColor: '#FAB915',
+									label: "Réel",
+									backgroundColor: 'rgb(230, 159, 0)',
+									borderColor: 'rgb(230, 159, 0)',
 									fill: false,
 									data: data,
 								},{
-									label: "trendline (linear)",
-									backgroundColor: 'rgb(23, 156, 12)',
-									borderColor: 'rgb(23, 156, 12)',
+									label: "Tendance linéaire",
+									backgroundColor: 'rgb(86, 180, 233)',
+									borderColor: 'rgb(86, 180, 233)',
 									fill: false,
 									data: trendLine,
 								},{
-									label: "trendline (polynomial degree 3)",
-									backgroundColor: 'rgb(10, 99, 255)',
-									borderColor: 'rgb(10, 99, 255)',
+									label: "Tendance polynomiale degré 3",
+									backgroundColor: 'rgb(213, 94, 0)',
+									borderColor: 'rgb(213, 94, 0)',
 									fill: false,
 									data: trendLinePoly,
 								},{
-									label: "trendline (exponential)",
-									backgroundColor: 'rgb(232, 60, 60)',
-									borderColor: 'rgb(232, 60, 60)',
+									label: "Tendance exponencielle",
+									backgroundColor: 'rgb(0, 114, 178)',
+									borderColor: 'rgb(0, 114, 178)',
 									fill: false,
 									data: trendLineExp,
 								}]
 							},
 							options: {
 				                title:{
-				                    text: "historical bitcoin value",
+				                    text: "Historique de la valeure du Bitcoin (CHF)",
 									display: true
 				                },
 								scales: {
@@ -636,7 +774,7 @@
 									yAxes: [{
 										scaleLabel: {
 											display: true,
-											labelString: 'Value (CHF)'
+											labelString: 'Valeur (CHF)'
 										}
 									}]
 								},
@@ -654,12 +792,10 @@
 
 						if (this.bitcoinValueChart)
 						{
-							this.bitcoinValueChart.update(config);
+							this.bitcoinValueChart.destroy();
 						}
-						else
-						{
-							this.bitcoinValueChart = new Chart(ctx,config);
-						}
+
+						this.bitcoinValueChart = new Chart(ctx,config);
 					}
 				},
 			});
@@ -674,8 +810,7 @@
 					app.drawDifficultyGraph();
 					app.drawBitcoinValueGraph();
 
-					// Initialize Semantic UI components
-				    $('.ui.checkbox').checkbox();
+					$('.ui.dimmer').removeClass('active');
 				}
 			});
 		});
