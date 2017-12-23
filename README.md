@@ -1,10 +1,16 @@
-# cryptocurrency-mining-profitability
+# Rentabilité du minage de Bitcoin
 
-This is an Information Visualisation project aiming to show the profitability of Bitcoin mining.
+Ce projet de Visualisation d'Information tente d'analyser la rentabilité du minage du Bitcoin.
 
-## How to
+##TODO ?
+Impression ?
+export ?
+7 Mantra (schneiderman)
+règles d'utilisabilité
+sauver avec get
+## Comment lancer l'application
 
-Since the app is only HTML, CSS and Javascript, you can simply open this link:
+Étant donné que l'application tourne avec HTML, CSS et Javascript, Vous pouvez simplement ouvrir `index.html` en local, ou le lien ci-dessous en ligne :
 
 http://htmlpreview.github.io/?https://github.com/fakocher/cryptocurrency-mining-profitability/blob/master/index.html
 
@@ -12,7 +18,7 @@ http://htmlpreview.github.io/?https://github.com/fakocher/cryptocurrency-mining-
 
 ### prix actuel du bitcoin
 
-nous obtenons directement la dernière valeur du marché depuis une API.
+Nous obtenons directement la dernière valeur du marché depuis une API.
 
 ### données historiques sur la difficulté et sur le prix du bitcoin
 
@@ -56,6 +62,7 @@ Nous sommes contents de l'outil graphique ChartJS.
 
 ## Accessibilité
 
+responsivness
 Le choix des couleurs a été adapté à un public daltonien.
 
 ## Améliorations possibles
@@ -65,7 +72,7 @@ Le choix des couleurs a été adapté à un public daltonien.
 - Améliorer la performance des graphiques (quelques latences)
 - Ajouter l'accessibilité pour les mal-voyants
 
-## Sources
+## Sources (données et informations)
 
 * https://www.cryptocompare.com/api/
 * https://www.cryptocompare.com/mining/calculator/btc
@@ -78,7 +85,7 @@ Le choix des couleurs a été adapté à un public daltonien.
 * http://mkweb.bcgsc.ca/colorblind/
 * http://www.romande-energie.ch/images/Files/prix-electricite/2017_prix-electricite_RE.pdf
 
-## JS & CSS Libraries
+## Bibliothèques JS & CSS
 
 * http://www.chartjs.org/
 * https://vuejs.org/
