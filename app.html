@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Rentabilité du minage de Bitcoin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.css">
+</head>
+
+<body>
+    <div class="ui active page dimmer">
+        <div class="ui loader"></div>
+    </div>
+    <div id="app" style="height: 100vh; min-width: 75rem; overflow: hidden">
+        <div style="float: right; width: 25rem; height: 100vh; background: #e0e0e0; overflow-y: scroll">
+            <div class="ui basic segment">
+                <form class="ui form">
+                    <div class="field">
+                        <label>Mineur</label>
+                        <div class="ui selection dropdown" data-model="miner">
+                            <input type="hidden" value="antminers9">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">Mineur ASIC</div>
+                            <div class="menu">
+                                <div class="item" data-value="antminers9">AntMiner S9 (14'000 GH/s)</div>
+                                <div class="item" data-value="antminers7">AntMiner S7 (4'860 GH/s)</div>
+                                <div class="item" data-value="avalon721">Avalon 721 (6'000 GH/s)</div>
+                                <div class="item" data-value="avalon6">Avalon 6 (3'500 GH/s)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Hashrate ( GH / s )</label>
+                        <input type=number v-model="hashRate">
+                    </div>
+                    <div class="field">
+                        <label>Prix du mineur ( CHF )</label>
+                        <input type=number v-model="hardwareCost">
+                    </div>
+                    <div class="field">
+                        <label>Consommation du mineur (Watts)</label>
+                        <input type=number v-model="powerConsumption">
+                    </div>
+                    <div class="field">
+                        <label>Prix du Bitcoin (CHF)</label>
+                        <input type=number v-model="bitcoinCHFPrice">
+                    </div>
+                    <div class="field">
+                        <label>Difficulté de minage</label>
+                        <input type=number v-model="difficulty">
+                    </div>
+                    <div class="field">
+                        <label>Prix de l'électricité ( CHF / kWh ) </label>
+                        <input type=number v-model="electricityRate">
+                    </div>
+                    <div class="grouped fields">
+                        <label>Prédiction du prix du Bitcoin</label>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="bitcoinPredictionType" value="none">
+                                <label>Aucune (prix d'aujourd'hui)</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="bitcoinPredictionType" value="linear">
+                                <label>Linéaire</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="bitcoinPredictionType" value="polynomial">
+                                <label>Polynomiale</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="bitcoinPredictionType" value="exponential">
+                                <label>Exponencielle</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grouped fields">
+                        <label>Prédiction du la difficulté de minage</label>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="difficultyPredictionType" value="none">
+                                <label>Aucune (difficulté d'aujourd'hui)</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="difficultyPredictionType" value="linear">
+                                <label>Linéaire</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="difficultyPredictionType" value="polynomial">
+                                <label>Polynomiale</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="difficultyPredictionType" value="exponential">
+                                <label>Exponentielle</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grouped fields">
+                        <label>Monnaie de l'ordonnée</label>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="currency" value="bitcoin">
+                                <label>Bitcoin</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" v-model="currency" value="chf">
+                                <label>Francs Suisses</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div style="height: 100vh; width: auto; min-width: 50rem; overflow: hidden">
+            <div class="ui basic segment">
+                <canvas id="graph"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="data/data.js"></script>
+    <script src="js/vue-instance.js"></script>
+    <script src="js/bootstrap.js"></script>
+</body>
+
+</html>
