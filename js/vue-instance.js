@@ -21,7 +21,6 @@ var vueApp = new Vue({
         currency: 'chf', // 'bitcoin' of 'chf'
         hardwareCost: 2400, // CHF
         reward: 12.5,
-        dailyProfit: 0, //CHF,
         difficultyPredictionType: 'none',
         bitcoinPredictionType: 'none',
         coinData: {},
@@ -159,6 +158,14 @@ var vueApp = new Vue({
         },
 
         /**
+         * Calculate coins mined per day
+         */
+        getCoinPerDay: function()
+        {
+            return 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * this.reward;
+        },
+
+        /**
          * Update the graph
          */
         updateGraph: function ()
@@ -171,13 +178,26 @@ var vueApp = new Vue({
                 var dataLinear = [];
                 var dataPoly = [];
                 var dataExp = [];
-                var BTCPerDay = 24 / (this.difficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * this.reward;
-                
+                var yLabel = null;
+
+                var coinsPerDay = this.getCoinPerDay();
                 var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
-                this.dailyProfit = BTCPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
-                var dailyBTCProfit = BTCPerDay - electricityCHFCostPerDay / this.bitcoinCHFPrice;
+                var dailyCHFProfit = coinsPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
+                var dailyBTCProfit = coinsPerDay - electricityCHFCostPerDay / this.bitcoinCHFPrice;
                 
-                var yLabel = 'Net worth (Bitcoin)';
+                switch (this.currency)
+                {
+                    case 'bitcoin':
+                        yLabel = 'Profit quotidien (Bitcoin)';
+                        labelling = false;
+                    break;
+
+                    case 'chf':
+                        yLabel = 'Profit quotidien (CHF)';
+                        labelling = true;
+                    break;
+                }
+
                 var labelling = false;
                 
                 var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
@@ -206,17 +226,28 @@ var vueApp = new Vue({
                     {
                         case 'bitcoin':
                             data.push(i * estimatedDailyBTCProfit - this.hardwareCost / this.bitcoinCHFPrice);
-                            yLabel = 'Profit quotidien (Bitcoin)';
-                            labelling = false;
                         break;
 
                         case 'chf':
-                            data.push(i * estimatedDailyProfit - this.hardwareCost);
-                            dataLinear.push(i * estimatedDailyProfitLinear - this.hardwareCost);
-                            dataPoly.push(i * estimatedDailyProfitPoly - this.hardwareCost);
-                            dataExp.push(i * estimatedDailyProfitExp - this.hardwareCost);
-                            yLabel = 'Profit quotidien (CHF)';
-                            labelling = true;
+                            switch (this.bitcoinPredictionType)
+                            {
+                                case 'linear':
+                                    data.push(i * estimatedDailyProfitLinear - this.hardwareCost);
+                                break;
+
+                                case 'polynomial':
+                                    data.push(i * estimatedDailyProfitPoly - this.hardwareCost);
+                                break;
+
+                                case 'exponential':
+                                    data.push(i * estimatedDailyProfitExp - this.hardwareCost);
+                                break;
+
+                                case 'none':
+                                default:
+                                    data.push(i * estimatedDailyProfit - this.hardwareCost);
+                                break;
+                            }
                         break;
                     }
                 }
@@ -236,37 +267,37 @@ var vueApp = new Vue({
                 this.chart.data.labels = dates;
                 this.chart.data.datasets = [
                     {
-                        label: "Prix BTC constant",
+                        label: "Prix BTC",
                         backgroundColor: 'rgb(230, 159, 0)',
                         borderColor: 'rgb(230, 159, 0)',
                         fill: false,
                         pointRadius: 0,
                         data: data
                     },
-                    {
-                        label: "Prix BTC  linéaire",
-                        backgroundColor: 'rgb(86, 180, 233)',
-                        borderColor: 'rgb(86, 180, 233)',
-                        fill: false,
-                        pointRadius: 0,
-                        data: dataLinear
-                    },
-                    {
-                        label: "Prix BTC polynomial",
-                        backgroundColor: 'rgb(213, 94, 0)',
-                        borderColor: 'rgb(213, 94, 0)',
-                        fill: false,
-                        pointRadius: 0,
-                        data: dataPoly
-                    },
-                    {
-                        label: "Prix BTC exponentiel",
-                        backgroundColor: 'rgb(0, 114, 178)',
-                        borderColor: 'rgb(0, 114, 178)',
-                        fill: false,
-                        pointRadius: 0,
-                        data: dataExp
-                    }
+                    // {
+                    //     label: "Prix BTC  linéaire",
+                    //     backgroundColor: 'rgb(86, 180, 233)',
+                    //     borderColor: 'rgb(86, 180, 233)',
+                    //     fill: false,
+                    //     pointRadius: 0,
+                    //     data: dataLinear
+                    // },
+                    // {
+                    //     label: "Prix BTC polynomial",
+                    //     backgroundColor: 'rgb(213, 94, 0)',
+                    //     borderColor: 'rgb(213, 94, 0)',
+                    //     fill: false,
+                    //     pointRadius: 0,
+                    //     data: dataPoly
+                    // },
+                    // {
+                    //     label: "Prix BTC exponentiel",
+                    //     backgroundColor: 'rgb(0, 114, 178)',
+                    //     borderColor: 'rgb(0, 114, 178)',
+                    //     fill: false,
+                    //     pointRadius: 0,
+                    //     data: dataExp
+                    // }
                 ];
 
                 this.chart.options.scales.yAxes[0].labelString = yLabel;
