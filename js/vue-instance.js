@@ -63,39 +63,39 @@ var vueApp = new Vue({
         },
         difficultyPredictionType: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         bitcoinPredictionType: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         hashRate: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         difficulty: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         bitcoinCHFPrice: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         powerConsumption: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         electricityRate: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         currency: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         },
         hardwareCost: function (val, oldVal)
         {
-            this.updateGraph();
+            this.updateGraphs();
         }
     },
 
@@ -107,6 +107,108 @@ var vueApp = new Vue({
         /**
          * Initialize the graph
          */
+		initValueHistoryGraph: function()
+		{
+			var ctx = document.getElementById('bitcoinHistoryGraph').getContext('2d');
+			var config = {
+				type: 'line',
+				options: {
+					title:{
+						text: "Historique de la valeure du Bitcoin (CHF)",
+						display: true
+					},
+					scales: {
+						xAxes: [{
+							type: "time",
+							time: {
+								unit:'year',
+								tooltipFormat: 'D MMM YYYY'
+							},
+							scaleLabel: {
+								display: false,
+								labelString: 'Time'
+							}
+						}, ],
+						yAxes: [{
+							scaleLabel: {
+								display: true,
+								labelString: 'Valeur (CHF)'
+							}
+						}]
+					},
+					elements: { 
+						point: { 
+							radius: 1
+						} 
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false
+					},
+					legend: {
+						display: false
+					},
+					animation: {
+						duration: 500
+					}
+				}
+			}
+			this.bitcoinValueChart = new Chart(ctx,config);
+		},
+		initDifficultyHistoryGraph: function()
+		{
+			var ctx = document.getElementById('difficultyHistoryGraph').getContext('2d');
+			var config = {
+				type: 'line',
+				options: {
+					title:{
+						text: "Historique de la difficulté de minage du Bitcoin",
+						display: true
+					},
+					scales: {
+						xAxes: [{
+							type: "time",
+							time: {
+								unit:'year',
+								tooltipFormat: 'D MMM YYYY'
+							},
+							scaleLabel: {
+								display: false,
+								labelString: 'Time'
+							}
+						}, ],
+						yAxes: [{
+							scaleLabel: {
+								display: true,
+								labelString: 'difficulté ( milliards )'
+							},
+							ticks: {
+								callback: function(value, index, values) {
+								return value/10e9;
+								}
+							}
+						}]
+					},
+					elements: { 
+						point: { 
+							radius: 1 
+						} 
+					},
+					tooltips: {
+						mode: 'index',
+						intersect: false
+					},
+					legend: {
+						display: false
+					},
+					animation: {
+						duration: 500
+					}
+				}
+			}
+
+			this.difficultyChart = new Chart(ctx,config);
+		},
         initGraph: function ()
         {
             var ctx = document.getElementById('graph').getContext('2d');
@@ -156,7 +258,12 @@ var vueApp = new Vue({
 
             this.chart = new Chart(ctx, config);
         },
-
+		initGraphs: function()
+		{
+			 this.initGraph();
+			 this.initValueHistoryGraph();
+			 this.initDifficultyHistoryGraph();
+		},
         /**
          * Calculate coins mined per day
          */
@@ -168,6 +275,132 @@ var vueApp = new Vue({
         /**
          * Update the graph
          */
+		updateDifficultyGraph: function()
+		{
+			if(this.difficultyChart)
+			{
+				var dates = [];
+				var data = difficultyData;
+				var selectedDataset;
+				
+				var trendLine = [];
+				var trendLinePoly = [];
+				
+				for( var i = 0 ; i <= 1636 ; i++)
+				{
+					dates.push(newDate(i));
+					trendLine.push(Math.pow(3.2622*Math.E,0.00789*i));
+					trendLinePoly.push(0.0032*Math.pow(i,5) - 10.947*Math.pow(i,4) +
+											13661*Math.pow(i,3) - 7e+6*Math.pow(i,2) + 
+											1e+9*i - 6e+10)
+				}
+				function newDate(days) {
+					return moment("20090103", "YYYYMMDD").add(2 * days, 'd').toDate();
+				}
+				switch (this.difficultyPredictionType)
+				{
+					
+					case 'polynomial':
+						selectedDataset = trendLinePoly;
+					break;
+
+					case 'exponential':
+						selectedDataset = trendLine;
+					break;
+
+					case 'none':
+					default:
+						selectedDataset = null;
+					break;
+				}
+				this.difficultyChart.data.labels = dates;
+                this.difficultyChart.data.datasets = [
+                    {
+                        label: "Historique",
+                        backgroundColor: 'rgb(230, 159, 0)',
+                        borderColor: 'rgb(230, 159, 0)',
+                        fill: false,
+                        pointRadius: 0,
+                        data: data
+                    },
+					{
+						label: "Tendance",
+                        backgroundColor: 'rgb(0, 114, 178)',
+                        borderColor: 'rgb(0, 114, 178)',
+                        fill: false,
+                        pointRadius: 0,
+                        data: selectedDataset
+					}
+                ];
+
+				this.difficultyChart.options.legend.display = true;
+                this.difficultyChart.update();
+			}
+			
+		},
+		updateBitcoinGraph: function()
+		{
+			if(this.bitcoinValueChart)
+			{
+				var dates = [];
+				var data = bitcoinValueData;
+				
+				var trendLine = [];
+				var trendLinePoly = [];
+				var trendLineExp = [];
+				
+				for( var i = 0 ; i <= 1636 ; i++)
+				{
+					dates.push(newDate(i));
+					trendLine.push(13.3991 * i -2912.3);
+					trendLinePoly.push(4e-6*Math.pow(i,3) - 0.0027*Math.pow(i,2) + 
+											5.646*i - 1000);
+					trendLineExp.push(0.4061*Math.pow(Math.E,0.0066*i));
+				}
+				function newDate(days) {
+					return moment("20090103", "YYYYMMDD").add(2 * days, 'd').toDate();
+				}
+				switch (this.bitcoinPredictionType)
+				{
+					case 'linear':
+						selectedDataset = trendLine;
+					break;
+					case 'polynomial':
+						selectedDataset = trendLinePoly;
+					break;
+
+					case 'exponential':
+						selectedDataset = trendLineExp;
+					break;
+					case 'none':
+					default:
+						selectedDataset = null;
+					break;
+				}
+				this.bitcoinValueChart.data.labels = dates;
+                this.bitcoinValueChart.data.datasets = [
+                    {
+                        label: "Historique",
+                        backgroundColor: 'rgb(230, 159, 0)',
+                        borderColor: 'rgb(230, 159, 0)',
+                        fill: false,
+                        pointRadius: 0,
+                        data: data
+                    },
+					{
+						label: "Tendance",
+                        backgroundColor: 'rgb(0, 114, 178)',
+                        borderColor: 'rgb(0, 114, 178)',
+                        fill: false,
+                        pointRadius: 0,
+                        data: selectedDataset
+					}
+                ];
+
+				this.bitcoinValueChart.options.legend.display = true;
+                this.bitcoinValueChart.update();
+			}
+		},
         updateGraph: function ()
         {
             // Check if the chart is initialized
@@ -179,6 +412,7 @@ var vueApp = new Vue({
                 var dataPoly = [];
                 var dataExp = [];
                 var yLabel = null;
+				var labelling = true;
 
                 var coinsPerDay = this.getCoinPerDay();
                 var electricityCHFCostPerDay = this.powerConsumption * this.electricityRate * 24 / 1000;
@@ -194,11 +428,9 @@ var vueApp = new Vue({
 
                     case 'chf':
                         yLabel = 'Profit quotidien (CHF)';
-                        labelling = true;
+                        labelling = false;
                     break;
                 }
-
-                var labelling = false;
                 
                 var daysSinceBeginning = moment().diff('2009-01-03', 'days')/2;
                 var estimatedDifficulty;
@@ -273,38 +505,20 @@ var vueApp = new Vue({
                         fill: false,
                         pointRadius: 0,
                         data: data
-                    },
-                    // {
-                    //     label: "Prix BTC  linéaire",
-                    //     backgroundColor: 'rgb(86, 180, 233)',
-                    //     borderColor: 'rgb(86, 180, 233)',
-                    //     fill: false,
-                    //     pointRadius: 0,
-                    //     data: dataLinear
-                    // },
-                    // {
-                    //     label: "Prix BTC polynomial",
-                    //     backgroundColor: 'rgb(213, 94, 0)',
-                    //     borderColor: 'rgb(213, 94, 0)',
-                    //     fill: false,
-                    //     pointRadius: 0,
-                    //     data: dataPoly
-                    // },
-                    // {
-                    //     label: "Prix BTC exponentiel",
-                    //     backgroundColor: 'rgb(0, 114, 178)',
-                    //     borderColor: 'rgb(0, 114, 178)',
-                    //     fill: false,
-                    //     pointRadius: 0,
-                    //     data: dataExp
-                    // }
+                    }
                 ];
 
-                this.chart.options.scales.yAxes[0].labelString = yLabel;
+				this.chart.options.scales.yAxes[0].scaleLabel.labelString = yLabel;
                 this.chart.options.legend.display = labelling;
 
                 this.chart.update();
             }
         },
+		updateGraphs: function()
+		{
+			this.updateGraph();
+			this.updateDifficultyGraph();
+			this.updateBitcoinGraph();
+		},
     }
 });

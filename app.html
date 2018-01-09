@@ -75,7 +75,7 @@
                         <div class="field">
                             <div class="ui radio checkbox">
                                 <input type="radio" v-model="bitcoinPredictionType" value="exponential">
-                                <label>Exponencielle</label>
+                                <label>Exponentielle</label>
                             </div>
                         </div>
                     </div>
@@ -85,12 +85,6 @@
                             <div class="ui radio checkbox">
                                 <input type="radio" v-model="difficultyPredictionType" value="none">
                                 <label>Aucune (difficulté d'aujourd'hui)</label>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <div class="ui radio checkbox">
-                                <input type="radio" v-model="difficultyPredictionType" value="linear">
-                                <label>Linéaire</label>
                             </div>
                         </div>
                         <div class="field">
@@ -124,9 +118,13 @@
                 </form>
             </div>
         </div>
-        <div style="height: 100vh; width: auto; min-width: 50rem; overflow: hidden">
+        <div style="height: 100vh; width: auto; min-width: 50rem; overflow-y: scroll">
             <div class="ui basic segment">
                 <canvas id="graph"></canvas>
+            </div>
+			<div class="ui basic segment">
+                <canvas id="difficultyHistoryGraph"></canvas>
+				<canvas id="bitcoinHistoryGraph"></canvas>
             </div>
         </div>
     </div>

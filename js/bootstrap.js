@@ -23,8 +23,8 @@ $('document').ready(function()
     ).then(function()
     {
         // Draw graph
-        vueApp.initGraph();
-        vueApp.updateGraph();
+        vueApp.initGraphs();
+        vueApp.updateGraphs();
 
         // Hide loader
         $('.ui.dimmer').removeClass('active'); 
