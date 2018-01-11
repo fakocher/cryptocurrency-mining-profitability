@@ -9,6 +9,15 @@ export ?
 règles d'utilisabilité
 sauver avec get
 
+## Introduction
+
+Dans le cadre du cours de visualisation de l'information, il nous a été demandé de proposer et de développer un projet de visualisation.
+
+Pour notre projet, nous avons choisi de travailler avec les monnaies virtuelles, qui est un sujet très actuel. 
+Plus précisément, en raison de la difficulté à trouver des informations sur le minage, nous avons choisi de centrer notre projet sur celui-ci.
+Notre projet consiste alors à étudier la rentabilité du minage du Bitcoin, et de présenter ces résultats à un public d'amateurs, 
+qui s'intéressent ou désirent se lancer dans le minage de monnaies virtuelles.
+
 ## Comment lancer l'application
 
 Étant donné que l'application tourne avec HTML, CSS et Javascript, Vous pouvez simplement ouvrir `app.html` en local, ou le lien ci-dessous en ligne :
@@ -63,20 +72,51 @@ Ceci est une question très actuelle, du à l'augmentation de la popularité des
 Nous avons trouvé énormément de sites internet qui parlent de la valeur du Bitcoin, mais très peu parlent du minage.
 
 Nos résultats sont peu concluants et le message que nous essayons de transmettre est qu'il n'est pas judicieux de 
-commencer à miner, ou d'investir dans des processeurs de minages, car miner risque de ne plus être rentable d'ici peu. 
+commencer à miner, ou d'investir dans des processeurs de minages, car miner risque de ne plus être rentable d'ici peu.
+
+Il faut cependant noter que notre travail comporte de nombreuses incertitudes et imprécisions, notamment à cause des estimations à long terme 
+et parce que nous avons fixé certains paramêtres lors du calcul, comme par exemple le prix de l'électricité et le hashrate.
 
 ## Représentation
 
-la rentabilité actuelle du minage, en utilisant un processeur dédié.
-2 graphiques montrant les courbes historiques de difficulté et de la valeur du bitcoin, ainsi que les courbes de tendances qui seront utilisées pour estimer la rentabilité.
-2 graphiques montrant l'évolution de la rentabilité du minage, en francs suisse et en bitcoin, suivant les courbes de tendances.
+Pour la
 
+--> screenshot du graphique prédiction
+
+Nous avons décidé de présenter nos prédictions en utilisant un graphique simple, sous forme de line chart, avec en abscisse le temps en mois, et en ordonnée la rentabilité.
+Par rentabilité, nous entendons l'argent gagné ou perdu en minant du bitcoin. Nous avons choisi ce type de graphique car c'est le genre 
+de graphique généralement utilisé pour représenter des prédictions. 
+
+Nous avons choisi de représenter l'évolution de la rentabilité sur un an, et de diviser l'axe des abscisses en mois. 
+L'axe des ordonnées change automatiquement en fonction des données et ne commence pas à une valeur fixe. En effet, nous nous intéressons 
+plus à l'évolution et la forme de la courbe plutôt qu'à la fortune à un instant défini.
+
+Plutôt que de montrer plusieurs courbes sur un graphique, avec les différentes courbes de tendance, nous avons choisi de laisser le choix à 
+l'utilisateur quand au choix de la tendance, et nous avons ajouté deux graphiques montrant la forme de la courbe de tendance choisie, comparée aux historiques
+de difficulté et du prix du marché du bitcoin.
+
+Du à la taille du graphique, nous avons choisi de laisser une grille sur le graphique pour pouvoir se situer rapidement sur le graphique. 
+
+La couleur de la courbe est adaptée à un public daltonien.
+
+--> screenshot des graphiques historiques
+
+Pour bien comprendre le graphique sur la rentabilité, il nous a semblé essentiel de montrer à l'utilisateur quelles courbes de tendances nous utilisons.
+En effet, le calcul est complexe et dépent de beaucoup de paramêtres, et nous ne pouvions pas expliquer le fonctionnement de l'algorithme, sans écrire de longs textes techniques.
+Nous avons donc décider d'ajouter deux graphiques montrant les historiques, et la courbe de tendance que l'utilisateur peut choisir. 
+Ainsi, l'utilisateur peut comparer la courbe choisie avec l'historique, et choisir celle qui correspond le mieux à la réalité selon lui. 
+Il peut aussi observer l'impact de la courbe en la comparant avec le graphique de rentabilité.
+
+Nous avons choisi de présenter les données depuis le lancement du bitcoin, sans se préoccuper des détails des valeurs, car c'est de nouveau 
+la forme de la courbe qui nous intéresse, et non pas les valeurs. L'axe des abscisses est divisé en année et l'axe des ordonnées est adapté aux courbes.
+
+Nous avons de nouveau laisser la grille pour se situer et utilisé la même palette de couleur que pour le graphique précédent.
 
 ## Présentation et interaction
 
 présentation sous forme de page web, en utilisant différentes librairies javascript.
 
-Les intéractions possibles sont : 
+### Formulaire
 
  -	formulaire permettant d'entrer des paramètres personnalisés.
  -	choix dans une liste de processeurs utilisés pour faire du minage.
