@@ -174,10 +174,10 @@ Le choix des couleurs a été adapté à un public daltonien.
 
 ## Améliorations possibles
 
-- Ajouter la rentabilité d'autres crypto-monnaies pour comparer
-- Ajouter des processeurs depuis une API
-- Améliorer la performance des graphiques (quelques latences)
-- Ajouter l'accessibilité pour les mal-voyants
+- La première amélioration à ajouter est de récupérer les données en temps réel. En effet, il est très important de pouvoir suivre les courbes actuelles et d'estimer la tendance en fonction des ces données.
+- Une amélioration conséquente pourrait aussi être de pouvoir changer les courbes de tendance manuellement, en faisant du drag and drop directement sur les graphiques.
+- Ajouter d'autres monnaies
+- Ajouter une page d'explications en annexe.
 
 ## Conclusion
 
