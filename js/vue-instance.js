@@ -21,7 +21,7 @@ var vueApp = new Vue({
         currency: 'chf', // 'bitcoin' of 'chf'
         hardwareCost: 2400, // CHF
         reward: 12.5,
-        difficultyPredictionType: 'none',
+        difficultyPredictionType: 'exponential',
         bitcoinPredictionType: 'none',
         coinData: {},
         miningData: {},
@@ -317,8 +317,8 @@ var vueApp = new Vue({
                 this.difficultyChart.data.datasets = [
                     {
                         label: "Historique",
-                        backgroundColor: 'rgb(230, 159, 0)',
-                        borderColor: 'rgb(230, 159, 0)',
+                        backgroundColor: 'rgb(213, 94, 0)',
+                        borderColor: 'rgb(213, 94, 0)',
                         fill: false,
                         pointRadius: 0,
                         data: data
@@ -381,9 +381,9 @@ var vueApp = new Vue({
                 this.bitcoinValueChart.data.datasets = [
                     {
                         label: "Historique",
-                        backgroundColor: 'rgb(230, 159, 0)',
+                        backgroundColor: '#FFECC6',
                         borderColor: 'rgb(230, 159, 0)',
-                        fill: false,
+                        fill: true,
                         pointRadius: 0,
                         data: data
                     },
@@ -422,12 +422,12 @@ var vueApp = new Vue({
                 switch (this.currency)
                 {
                     case 'bitcoin':
-                        yLabel = 'Profit quotidien (Bitcoin)';
+                        yLabel = 'Profit (Bitcoin)';
                         labelling = false;
                     break;
 
                     case 'chf':
-                        yLabel = 'Profit quotidien (CHF)';
+                        yLabel = 'Profit (CHF)';
                         labelling = false;
                     break;
                 }
@@ -515,9 +515,9 @@ var vueApp = new Vue({
                 this.chart.data.datasets = [
                     {
                         label: "Prix BTC",
-                        backgroundColor: 'rgb(230, 159, 0)',
+                        backgroundColor: '#FFECC6',
                         borderColor: 'rgb(230, 159, 0)',
-                        fill: false,
+                        fill: true,
                         pointRadius: 0,
                         data: data
                     }

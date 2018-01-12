@@ -103,7 +103,7 @@ Nous avons décidé de faire notre projet sous forme de page WEB, en utilisant j
 
 Les interactions avec les graphiques sont assez limitées. L'utilisateur peut cependant observer les points de données en passant la souris sur le graphique.
 
-![Graphiques de tendance](screenshots/label.png)
+![Graphiques de tendance](screenshots/prediction_graph.png)
 
 Comme dit précédemment, nous nous intéressons principalement à la forme de la courbe mais il peut être intéressant pour l'utilisateur d'analyser les données plus en détail.
 

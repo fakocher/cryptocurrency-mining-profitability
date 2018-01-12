@@ -44,10 +44,10 @@
                         <label>Prix du Bitcoin (CHF)</label>
                         <input type=number v-model="bitcoinCHFPrice">
                     </div>
-                    <div class="field">
+                    <!-- <div class="field">
                         <label>Difficulté de minage</label>
                         <input type=number v-model="difficulty">
-                    </div>
+                    </div> -->
                     <div class="field">
                         <label>Prix de l'électricité ( CHF / kWh ) </label>
                         <input type=number v-model="electricityRate">
@@ -123,8 +123,14 @@
                 <canvas id="graph"></canvas>
             </div>
 			<div class="ui basic segment">
-                <canvas id="bitcoinHistoryGraph"></canvas>
-                <canvas id="difficultyHistoryGraph"></canvas>
+                <div class="ui stackable two column grid">
+                    <div class="column">
+                        <canvas id="bitcoinHistoryGraph"></canvas>
+                    </div>
+                    <div class="column">
+                        <canvas id="difficultyHistoryGraph"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
