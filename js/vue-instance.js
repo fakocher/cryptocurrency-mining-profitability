@@ -442,8 +442,23 @@ var vueApp = new Vue({
                 for ( var i = 0 ; i <= 365 ; i += 7)
                 {
                     dates.push(newDate(i));
-                    
-                    estimatedDifficulty = Math.pow(3.2622*Math.E,0.00789*(daysSinceBeginning+i/2));
+					
+                    switch(this.difficultyPredictionType)
+					{
+						case 'polynomial':
+							estimatedDifficulty = 0.0032*Math.pow(daysSinceBeginning+i/2,5) - 10.947*Math.pow(daysSinceBeginning+i/2,4) + 13661*Math.pow(daysSinceBeginning+i/2,3) - 7e+6*Math.pow(daysSinceBeginning+i/2,2) + 1e+9*(daysSinceBeginning+i/2) - 6e+10; 
+						break;
+
+						case 'exponential':
+							estimatedDifficulty = Math.pow(3.2622*Math.E,0.00789*(daysSinceBeginning+i/2));
+						break;
+
+						case 'none':
+						default:
+							estimatedDifficulty = this.difficulty;
+						break;
+					}
+					
                     estimatedBTCPerDay  = 24 / (estimatedDifficulty * Math.pow(2, 32) / (this.hashRate * Math.pow(10, 9)) / 60 / 60) * this.reward;
                     
                     estimatedDailyProfit = estimatedBTCPerDay * this.bitcoinCHFPrice - electricityCHFCostPerDay;
